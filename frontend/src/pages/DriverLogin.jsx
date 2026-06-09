@@ -27,7 +27,7 @@ export default function DriverLogin() {
     try {
       setIsSubmitting(true);
 
-      const response = await fetch("http://localhost:8000/driver/login", {
+      const response = await fetch("http://192.168.101.40:8000/driver/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

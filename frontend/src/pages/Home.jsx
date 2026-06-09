@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
 
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://192.168.101.40:8000";
+
 export default function Home() {
   const [hostel, setHostel] = useState("");
   const [eta, setEta] = useState(null);
@@ -10,7 +12,7 @@ export default function Home() {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    const socket = io("http://192.168.101.40:8000", {
+    const socket = io(BACKEND_URL, {
       auth: {
         message: "Student socket",
       },
@@ -27,13 +29,18 @@ export default function Home() {
     });
 
     socket.on("eta_response", ({ driverName, busNumber, eta }) => {
-      setEta(
-        `${Math.round(eta / 60)} mins (Bus ${busNumber} - ${driverName})`
-      );
+      setEta(`${Math.round(eta / 60)} mins (Bus ${busNumber} - ${driverName})`);
+      setIsLoading(false);
+    });
+
+    socket.on("eta_response_error", ({ error }) => {
+      setEta(`Error: ${error || "Unable to fetch ETA"}`);
       setIsLoading(false);
     });
 
     return () => {
+      socket.off("eta_response");
+      socket.off("eta_response_error");
       socket.disconnect();
     };
   }, []);
@@ -89,8 +96,8 @@ export default function Home() {
           onChange={(e) => setHostel(e.target.value)}
         >
           <option value="">Select Stop</option>
-          <option value="Hostel 1">Meerut Central</option>
-          <option value="Hostel 2">Bhainsali</option>
+          <option value="Meerut Central">Meerut Central</option>
+          <option value="Bhainsali">Bhainsali</option>
           <option value="Hostel 3">Hostel 3</option>
           <option value="Hostel 4">Hostel 4</option>
         </select>

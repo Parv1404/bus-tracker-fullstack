@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://192.168.101.40:8000";
+
 export default function DriverLocation() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,54 +19,66 @@ export default function DriverLocation() {
   });
 
   const [status, setStatus] = useState("Connecting...");
-  const [sharedLocation, setSharedLocation] = useState(null);
+  // const [sharedLocation, setSharedLocation] = useState(null);
 
   useEffect(() => {
-    if (!driver?.busNumber) return;  // ✅ guards against null driver AND missing busNumber
+    if (!driver?.busNumber) return;
 
-    const socket = io("http://192.168.101.40:8000", {
+    const socket = io(BACKEND_URL, {
       auth: { message: "Driver socket", busNumber: driver.busNumber }
     });
     socketRef.current = socket;
 
     socket.on("connect", () => {
-      socket.emit("register_driver", { driverName: driver.driverName, busNumber: driver.busNumber });
       setStatus(`Active — Bus ${driver.busNumber}`);
     });
 
     socket.on("connect_error", () => setStatus("Connection failed."));
 
     socket.on("request_driver_location", ({ requestId }) => {
+      console.log("Received location request:", requestId);
+      if (!navigator.geolocation) {
+        socket.emit("driver_location_response", {
+          requestId,
+          driverName: driver.driverName,
+          busNumber: driver.busNumber,
+          locationError: "Geolocation not supported by this browser",
+        });
+        return;
+      } 
+
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
+          const currentLocation = {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          };
+
+          // setSharedLocation(currentLocation);
+          // setStatus("Location sent for ETA request.");
+
           socket.emit("driver_location_response", {
             requestId,
             driverName: driver.driverName,
             busNumber: driver.busNumber,
-            latitude: coords.latitude,
-            longitude: coords.longitude,
-            accuracy: coords.accuracy,
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
+            accuracy: currentLocation.accuracy,
           });
         },
-        () => {},
-        { enableHighAccuracy: true, timeout: 10000 }
+        (err) => {
+          socket.emit("driver_location_response", {
+            requestId,
+            driverName: driver.driverName,
+            busNumber: driver.busNumber,
+            locationError: err.message || "Failed to get location",
+          });
+        },
+        { enableHighAccuracy: true}
       );
     });
     return () => socket.disconnect();
   }, [driver]);
-
-  const handleShareLocation = () => {
-    if (!navigator.geolocation) return setStatus("Geolocation not supported.");
-
-    navigator.geolocation.getCurrentPosition(
-      ({ coords }) => {
-        setSharedLocation({ latitude: coords.latitude, longitude: coords.longitude, accuracy: Math.round(coords.accuracy) });
-        setStatus("Location shared successfully!");
-      },
-      () => setStatus("Location access denied."),
-      { enableHighAccuracy: false, timeout: 10000 }
-    );
-  };
 
   if (!driver) {
     return (
@@ -86,17 +100,17 @@ export default function DriverLocation() {
         <p><strong>{driver.driverName}</strong> — Bus {driver.busNumber}</p>
         <p className="location-status">{status}</p>
 
-        <button className="location-button" onClick={handleShareLocation}>
+        {/* <button className="location-button" onClick={handleShareLocation}>
           Share My Location
-        </button>
+        </button> */}
 
-        {sharedLocation && (
+        {/* {sharedLocation && (
           <div className="eta-box location-meta">
             <p><strong>Lat:</strong> {sharedLocation.latitude}</p>
             <p><strong>Lng:</strong> {sharedLocation.longitude}</p>
             <p><strong>Accuracy:</strong> {sharedLocation.accuracy} m</p>
           </div>
-        )}
+        )} */}
 
         <p className="auth-switch">
           Switch account? <Link to="/driver/login">Logout</Link>
