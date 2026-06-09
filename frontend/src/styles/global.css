@@ -1,0 +1,465 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(
+    to bottom,
+    #eef3fb,
+    #f8f9fc
+  );
+}
+
+.container {
+  min-height: 100vh;
+}
+
+/* HERO */
+
+.hero {
+  position: relative;
+
+  background: linear-gradient(
+    135deg,
+    #07162d,
+    #102952
+  );
+
+  color: white;
+
+  text-align: center;
+
+  padding: 110px 20px 140px;
+
+  overflow: hidden;
+}
+
+.hero::before,
+.hero::after {
+  content: "";
+
+  position: absolute;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.hero::before {
+  width: 260px;
+  height: 260px;
+
+  top: -100px;
+  left: -60px;
+}
+
+.hero::after {
+  width: 360px;
+  height: 360px;
+
+  bottom: -180px;
+  right: -100px;
+}
+
+.hero-top {
+  position: absolute;
+
+  top: 20px;
+  left: 30px;
+  right: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.hbtu-logo {
+  width: 58px;
+  height: 58px;
+
+  object-fit: contain;
+
+  background: white;
+
+  padding: 4px;
+
+  border-radius: 50%;
+}
+
+.hero h1 {
+  font-size: 3.2rem;
+  font-weight: 700;
+}
+
+.hero p {
+  margin-top: 12px;
+
+  font-size: 1.05rem;
+
+  opacity: 0.9;
+}
+
+/* DRIVER BUTTON */
+
+.driver-link {
+  text-decoration: none;
+
+  color: white;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  backdrop-filter: blur(10px);
+
+  padding: 12px 22px;
+
+  border-radius: 30px;
+
+  font-weight: 600;
+
+  transition: 0.3s ease;
+}
+
+.driver-link:hover {
+  background: #f28c18;
+
+  transform: translateY(-2px);
+}
+
+/* CARD */
+
+.card {
+  width: 500px;
+
+  margin: -70px auto 0;
+
+  background: rgba(255, 255, 255, 0.95);
+
+  backdrop-filter: blur(10px);
+
+  border-radius: 24px;
+
+  padding: 35px;
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.12);
+
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.card-header {
+  margin-bottom: 22px;
+}
+
+.card h2 {
+  color: #07162d;
+
+  margin-bottom: 8px;
+}
+
+.card-header p {
+  color: #6f7a8c;
+
+  font-size: 0.95rem;
+}
+
+/* DROPDOWN */
+
+select {
+  width: 100%;
+
+  padding: 15px;
+
+  border-radius: 12px;
+
+  border: 1px solid #d8dfec;
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition: 0.3s;
+}
+
+select:focus {
+  border-color: #f28c18;
+
+  box-shadow: 0 0 0 4px rgba(242, 140, 24, 0.15);
+}
+
+/* BUTTON */
+
+.btn-group {
+  margin-top: 20px;
+}
+
+button {
+  width: 100%;
+
+  border: none;
+
+  padding: 15px;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  color: white;
+
+  background: linear-gradient(
+    135deg,
+    #f28c18,
+    #ffb347
+  );
+
+  transition: 0.3s;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 25px rgba(242, 140, 24, 0.25);
+}
+
+button:disabled {
+  opacity: 0.7;
+
+  cursor: not-allowed;
+}
+
+/* LOADER */
+
+.loader-container {
+  margin-top: 28px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.loader-container p {
+  color: #102952;
+  font-weight: 600;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+
+  border: 4px solid #d9e3ff;
+  border-top: 4px solid #f28c18;
+
+  border-radius: 50%;
+
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ETA BOX */
+
+.eta-box.success {
+  margin-top: 25px;
+
+  padding: 18px;
+
+  text-align: center;
+
+  border-radius: 14px;
+
+  background: #ecfff3;
+
+  border: 1px solid #b8ebc6;
+
+  color: #126f39;
+
+  font-weight: 700;
+}
+
+/* AUTH PAGES */
+
+.auth-page {
+  padding-bottom: 40px;
+}
+
+.auth-card {
+  margin-top: -40px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-form label {
+  font-size: 0.95rem;
+  color: #0b1b3b;
+  font-weight: 600;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #d6deeb;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.auth-form input:focus {
+  border-color: #f28c18;
+  box-shadow: 0 0 0 3px rgba(242, 140, 24, 0.2);
+}
+
+.auth-form button {
+  margin-top: 12px;
+}
+
+.auth-switch {
+  margin-top: 16px;
+  text-align: center;
+  color: #102952;
+}
+
+.auth-switch a {
+  color: #f28c18;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
+
+/* DRIVER LOCATION PAGE */
+
+.location-page .location-card {
+  max-width: 560px;
+}
+
+.location-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.driver-summary {
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    #eef4ff,
+    #f8fbff
+  );
+  border: 1px solid #d9e4f5;
+  color: #0b1b3b;
+  line-height: 1.7;
+}
+
+.location-button {
+  width: 100%;
+}
+
+.location-status {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff7ec;
+  border: 1px solid #ffd8a6;
+  color: #8b4a00;
+  font-weight: 600;
+}
+
+.location-meta {
+  margin-top: 0;
+}
+
+/* MOBILE */
+
+@media (max-width: 576px) {
+
+  .hero {
+    padding: 90px 16px 110px;
+  }
+
+  .hero-top {
+    left: 12px;
+    right: 12px;
+    top: 12px;
+  }
+
+  .logo-section span {
+    display: none;
+  }
+
+  .hbtu-logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  .driver-link {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+
+  .hero h1 {
+    font-size: 1.8rem;
+    line-height: 1.3;
+  }
+
+  .hero p {
+    font-size: 0.9rem;
+  }
+
+  .card {
+    width: calc(100% - 24px);
+    margin-top: -45px;
+    padding: 22px;
+    border-radius: 18px;
+  }
+
+  .card h2 {
+    font-size: 1.35rem;
+  }
+
+  select,
+  button {
+    font-size: 0.95rem;
+    padding: 14px;
+  }
+
+  .eta-box {
+    font-size: 0.9rem;
+    word-break: break-word;
+  }
+
+  .loader {
+    width: 42px;
+    height: 42px;
+  }
+}
