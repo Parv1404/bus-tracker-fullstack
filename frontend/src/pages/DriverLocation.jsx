@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-const BACKEND_URL = "http://192.168.101.40:8000";
+const BACKEND_URL = "https://trembling-district-cardstock.ngrok-free.dev/"; // http://192.168.101.40:8000
 
 export default function DriverLocation() {
   const navigate = useNavigate();

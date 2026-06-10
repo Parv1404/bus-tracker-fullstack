@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { io } from "socket.io-client";
-
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://192.168.101.40:8000";
+import { BACKEND_URL } from "../config";
 
 export default function Home() {
   const [hostel, setHostel] = useState("");
@@ -13,6 +12,7 @@ export default function Home() {
 
   useEffect(() => {
     const socket = io(BACKEND_URL, {
+      // transports: ["websocket"], 
       auth: {
         message: "Student socket",
       },
