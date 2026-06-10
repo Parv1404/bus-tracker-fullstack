@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || "http://192.168.101.40:8000";
+const BACKEND_URL = "http://192.168.101.40:8000";
 
 export default function DriverLocation() {
   const navigate = useNavigate();
