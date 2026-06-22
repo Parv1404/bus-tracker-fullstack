@@ -2,66 +2,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 export default function DriverSignup() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    busNumber: "",
-    driverName: "",
-    conductorName: "",
-    phoneNumber: "",
-    busIdentifier: "",
-    password: "",
-    confirmPassword: "",
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    const payload = {
-      busNumber: formData.busNumber.trim(),
-      driverName: formData.driverName.trim(),
-      conductorName: formData.conductorName.trim(),
-      phoneNumber: formData.phoneNumber.trim(),
-      busIdentifier: formData.busIdentifier.trim(),
-      password: formData.password,
-    };
-
-    try {
-      setIsSubmitting(true);
-
-      const response = await fetch("http://192.168.101.40:8000/driver/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      const responseData = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(responseData?.message || "Error registering driver");
-      }
-
-      alert("Driver registered successfully");
-      setFormData({
+    const [formData, setFormData] = useState({
         busNumber: "",
         driverName: "",
         conductorName: "",
@@ -69,112 +12,169 @@ export default function DriverSignup() {
         busIdentifier: "",
         password: "",
         confirmPassword: "",
-      });
-    } catch (err) {
-      setError(err.message || "An error occurred while registering the driver");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    });
 
-  return (
-    <div className="container auth-page">
-      <section className="hero">
-        <h1>Driver Signup</h1>
-      </section>
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState("");
 
-      <section className="card auth-card">
-        <h2>Create Account</h2>
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <label htmlFor="busNumber">Bus Number</label>
-          <input
-            id="busNumber"
-            name="busNumber"
-            type="text"
-            placeholder="Enter bus number"
-            value={formData.busNumber}
-            onChange={handleChange}
-            required
-          />
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
 
-          <label htmlFor="driverName">Driver Name</label>
-          <input
-            id="driverName"
-            name="driverName"
-            type="text"
-            placeholder="Enter driver name"
-            value={formData.driverName}
-            onChange={handleChange}
-            required
-          />
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
 
-          <label htmlFor="conductorName">Conductor Name</label>
-          <input
-            id="conductorName"
-            name="conductorName"
-            type="text"
-            placeholder="Enter conductor name"
-            value={formData.conductorName}
-            onChange={handleChange}
-            required
-          />
+        const payload = {
+            busNumber: formData.busNumber.trim(),
+            driverName: formData.driverName.trim(),
+            conductorName: formData.conductorName.trim(),
+            phoneNumber: formData.phoneNumber.trim(),
+            busIdentifier: formData.busIdentifier.trim(),
+            password: formData.password,
+        };
 
-          <label htmlFor="phoneNumber">Phone Number</label>
-          <input
-            id="phoneNumber"
-            name="phoneNumber"
-            type="tel"
-            placeholder="Enter phone number"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            required
-          />
+        try {
+            setIsSubmitting(true);
 
-          <label htmlFor="busIdentifier">Bus Identifier</label>
-          <input
-            id="busIdentifier"
-            name="busIdentifier"
-            type="text"
-            placeholder="Enter bus identifier"
-            value={formData.busIdentifier}
-            onChange={handleChange}
-          />
+            const response = await fetch("http://192.168.101.40:8000/driver/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
 
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            placeholder="Create password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
+            const responseData = await response.json().catch(() => null);
 
-          <label htmlFor="confirmPassword">Confirm Password</label>
-          <input
-            id="confirmPassword"
-            name="confirmPassword"
-            type="password"
-            placeholder="Confirm password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            required
-          />
+            if (!response.ok) {
+                throw new Error(responseData?.message || "Error registering driver");
+            }
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
+            alert("Driver registered successfully");
+            setFormData({
+                busNumber: "",
+                driverName: "",
+                conductorName: "",
+                phoneNumber: "",
+                busIdentifier: "",
+                password: "",
+                confirmPassword: "",
+            });
+        } catch (err) {
+            setError(err.message || "An error occurred while registering the driver");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
-          <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Signing up..." : "Signup"}
-          </button>
-        </form>
+    return (
+        <div className="container auth-page">
+            <section className="hero">
+                <h1>Driver Signup</h1>
+            </section>
 
-        <p className="auth-switch">
-          Already registered? <Link to="/driver/login">Login now</Link>
-        </p>
-      </section>
-    </div>
-  );
+            <section className="card auth-card">
+                <h2>Create Account</h2>
+
+                <form className="auth-form" onSubmit={handleSubmit}>
+                    <label htmlFor="busNumber">Bus Number</label>
+                    <input
+                        id="busNumber"
+                        name="busNumber"
+                        type="text"
+                        placeholder="Enter bus number"
+                        value={formData.busNumber}
+                        onChange={handleChange}
+                        required
+                    />
+
+                    <label htmlFor="driverName">Driver Name</label>
+                    <input
+                        id="driverName"
+                        name="driverName"
+                        type="text"
+                        placeholder="Enter driver name"
+                        value={formData.driverName}
+                        onChange={handleChange}
+                        required
+                    />
+
+                    <label htmlFor="conductorName">Conductor Name</label>
+                    <input
+                        id="conductorName"
+                        name="conductorName"
+                        type="text"
+                        placeholder="Enter conductor name"
+                        value={formData.conductorName}
+                        onChange={handleChange}
+                        required
+                    />
+
+                    <label htmlFor="phoneNumber">Phone Number</label>
+                    <input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        type="tel"
+                        placeholder="Enter phone number"
+                        value={formData.phoneNumber}
+                        onChange={handleChange}
+                        required
+                    />
+
+                    <label htmlFor="busIdentifier">Bus Identifier</label>
+                    <input
+                        id="busIdentifier"
+                        name="busIdentifier"
+                        type="text"
+                        placeholder="Enter bus identifier"
+                        value={formData.busIdentifier}
+                        onChange={handleChange}
+                    />
+
+                    <label htmlFor="password">Password</label>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Create password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                    />
+
+                    <label htmlFor="confirmPassword">Confirm Password</label>
+                    <input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="Confirm password"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        required
+                    />
+
+                    {error && <p style={{ color: "red" }}>{error}</p>}
+
+                    <button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Signing up..." : "Signup"}
+                    </button>
+                </form>
+
+                <p className="auth-switch">
+                    Already registered? <Link to="/driver/login">Login now</Link>
+                </p>
+            </section>
+        </div>
+    );
 }
 

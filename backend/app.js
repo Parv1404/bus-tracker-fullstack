@@ -5,21 +5,17 @@ const { router: driverRouter } = require('./routes/login.router');
 const path = require('path');
 
 function createApp() {
-  const app = express();
-  app.use(express.json());
-  app.use(cors());
-  connectDB();
+    const app = express();
+    app.use(express.json());
+    app.use(cors());
+    connectDB();
 
-  app.use('/driver', driverRouter);
-  
-  // serving frontend static files
-  app.use(express.static(path.join(__dirname, '../frontend/dist')));
-  app.get('*splat', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
-  });
+    app.use('/driver', driverRouter);
 
-  
-  return app;
+    // serving frontend static files
+    //   app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+    return app;
 }
 
 module.exports = { createApp };

@@ -1,4 +1,5 @@
 const express = require("express");
+
 const { signUpController } = require("../controllers/signUp.controller");
 const { loginController } = require("../controllers/login.controller");
 const { shareLocationController } = require("../controllers/location.controller");
