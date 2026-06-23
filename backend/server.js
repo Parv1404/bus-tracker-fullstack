@@ -10,11 +10,7 @@ function startServer(app, port) {
         cors: { origin: '*', methods: ['GET', 'POST'] }
     });
 
-    //   console.log("startServer");
-
-
-    createDriverSocket(io, driverManager, etaService); // register event listeners on the io object
-    //   console.log("startServer again");
+    createDriverSocket(io, driverManager, etaService); 
     server.listen(port, () => {
         console.log(`Server listening at PORT ${port}`);
     });

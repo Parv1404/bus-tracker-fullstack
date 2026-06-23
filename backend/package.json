@@ -7,7 +7,7 @@
     "type": "commonjs",
     "main": "index.js",
     "scripts": {
-        "start": "node index.js"
+        "start": "nodemon index.js"
     },
     "dependencies": {
         "bcrypt": "^6.0.0",
@@ -15,6 +15,7 @@
         "dotenv": "^17.4.2",
         "express": "^5.2.1",
         "mongoose": "^9.5.0",
+        "nodemon": "^3.1.14",
         "path": "^0.12.7",
         "socket.io": "^4.8.3"
     }

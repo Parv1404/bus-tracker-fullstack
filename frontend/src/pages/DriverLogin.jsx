@@ -27,8 +27,8 @@ export default function DriverLogin() {
         try {
             setIsSubmitting(true);
 
-            const response = await fetch("https://trembling-district-cardstock.ngrok-free.dev/driver/login", {
-                method: "POST",   // http://192.168.101.40:8000/driver/login
+            const response = await fetch("http://localhost:3000/driver/login", {
+                method: "POST",   
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -46,7 +46,7 @@ export default function DriverLogin() {
             }
 
             alert("Login successful");
-            navigate("/driver/location", { state: { driver: responseData?.driver || null } });
+            navigate("/driver/location", { replace: true });
         } catch (err) {
             setError(err.message || "Login failed");
         } finally {

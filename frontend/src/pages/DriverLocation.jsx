@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
-const BACKEND_URL = "https://trembling-district-cardstock.ngrok-free.dev/"; // http://192.168.101.40:8000
+import { BACKEND_URL } from "../config";
 
 export default function DriverLocation() {
     const navigate = useNavigate();
@@ -10,60 +10,80 @@ export default function DriverLocation() {
     const socketRef = useRef(null);
 
     const [driver] = useState(() => {
+        
         try {
-            console.log(JSON.parse(localStorage.getItem("driverProfile")) || location.state?.driver || null);
-            return JSON.parse(localStorage.getItem("driverProfile")) || location.state?.driver || null;
+            return (
+                JSON.parse(localStorage.getItem("driverProfile")) ||
+                location.state?.driver ||
+                null
+            );
         } catch {
             return null;
         }
     });
 
     const [status, setStatus] = useState("Connecting...");
-    // const [sharedLocation, setSharedLocation] = useState(null);
 
+    // Handle browser Back button
+    useEffect(() => {
+        const handleBackButton = () => {
+            localStorage.removeItem("driverProfile");
+            navigate("/driver/login", { replace: true });
+        };
+
+        // Add a history entry so the first Back action can be intercepted.
+        window.history.pushState(null, "", window.location.href);
+        window.addEventListener("popstate", handleBackButton);
+
+        return () => {
+            window.removeEventListener("popstate", handleBackButton);
+        };
+    }, [navigate]);
+
+    // Socket connection
     useEffect(() => {
         if (!driver?.busNumber) return;
 
         const socket = io(BACKEND_URL, {
-            auth: { message: "Driver socket", busNumber: driver.busNumber }
+            auth: {
+                message: "Driver socket",
+                busNumber: driver.busNumber,
+            },
         });
+
         socketRef.current = socket;
 
         socket.on("connect", () => {
             setStatus(`Active — Bus ${driver.busNumber}`);
         });
 
-        socket.on("connect_error", () => setStatus("Connection failed."));
+        socket.on("connect_error", () => {
+            setStatus("Connection failed.");
+        });
 
         socket.on("request_driver_location", ({ requestId }) => {
             console.log("Received location request:", requestId);
+
             if (!navigator.geolocation) {
                 socket.emit("driver_location_response", {
                     requestId,
                     driverName: driver.driverName,
                     busNumber: driver.busNumber,
-                    locationError: "Geolocation not supported by this browser",
+                    locationError:
+                        "Geolocation not supported by this browser",
                 });
                 return;
             }
 
             navigator.geolocation.getCurrentPosition(
                 ({ coords }) => {
-                    const currentLocation = {
-                        latitude: coords.latitude,
-                        longitude: coords.longitude,
-                    };
-
-                    // setSharedLocation(currentLocation);
-                    // setStatus("Location sent for ETA request.");
-
                     socket.emit("driver_location_response", {
                         requestId,
                         driverName: driver.driverName,
                         busNumber: driver.busNumber,
-                        latitude: currentLocation.latitude,
-                        longitude: currentLocation.longitude,
-                        accuracy: currentLocation.accuracy,
+                        latitude: coords.latitude,
+                        longitude: coords.longitude,
+                        accuracy: coords.accuracy,
                     });
                 },
                 (err) => {
@@ -71,22 +91,34 @@ export default function DriverLocation() {
                         requestId,
                         driverName: driver.driverName,
                         busNumber: driver.busNumber,
-                        locationError: err.message || "Failed to get location",
+                        locationError:
+                            err.message || "Failed to get location",
                     });
                 },
-                { enableHighAccuracy: true }
+                {
+                    enableHighAccuracy: true,
+                }
             );
         });
-        return () => socket.disconnect();
+
+        return () => {
+            socket.disconnect();
+        };
     }, [driver]);
 
-    if (!driver) {
-        return (
-            <div className="container">
-                <p>No active session.</p>
-                <button onClick={() => navigate("/driver/login")}>Go to Login</button>
-            </div>
-        );
+    const handleLogout = () => {
+        localStorage.removeItem("driverProfile");
+
+        if (socketRef.current) {
+            socketRef.current.disconnect();
+        }
+
+        navigate("/driver/login", { replace: true });
+    };
+
+    // Protect route
+    if (!driver || !localStorage.getItem("driverProfile")) {
+        return <Navigate to="/driver/login" replace />;
     }
 
     return (
@@ -97,23 +129,28 @@ export default function DriverLocation() {
             </section>
 
             <section className="card auth-card location-card">
-                <p><strong>{driver.driverName}</strong> — Bus {driver.busNumber}</p>
+                <p>
+                    <strong>{driver.driverName}</strong> — Bus{" "}
+                    {driver.busNumber}
+                </p>
+
                 <p className="location-status">{status}</p>
 
-                {/* <button className="location-button" onClick={handleShareLocation}>
-          Share My Location
-        </button> */}
-
-                {/* {sharedLocation && (
-          <div className="eta-box location-meta">
-            <p><strong>Lat:</strong> {sharedLocation.latitude}</p>
-            <p><strong>Lng:</strong> {sharedLocation.longitude}</p>
-            <p><strong>Accuracy:</strong> {sharedLocation.accuracy} m</p>
-          </div>
-        )} */}
-
                 <p className="auth-switch">
-                    Switch account? <Link to="/driver/login">Logout</Link>
+                    Switch account?{" "}
+                    <button
+                        onClick={handleLogout}
+                        style={{
+                            background: "none",
+                            border: "none",
+                            color: "blue",
+                            cursor: "pointer",
+                            padding: 0,
+                            textDecoration: "underline",
+                        }}
+                    >
+                        Logout
+                    </button>
                 </p>
             </section>
         </div>

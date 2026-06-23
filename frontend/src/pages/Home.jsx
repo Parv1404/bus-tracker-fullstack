@@ -61,24 +61,15 @@ export default function Home() {
         <div className="container">
             <div className="hero">
                 <div className="hero-top">
-                    <div className="logo-section">
-                        <img
-                            src="/hbtu-logo.png"
-                            alt="HBTU Logo"
-                            className="hbtu-logo"
-                        />
-                        <span>HBTU Kanpur</span>
-                    </div>
-
-                    <Link to="/driver/login" className="driver-link">
+                    <Link to="/driver/login" className="driver-link" replace = {true}>
                         Driver Dashboard
                     </Link>
                 </div>
 
-                <h1>HBTU Bus Tracking System</h1>
+                <h1>Bus Tracking System</h1>
 
                 <p>
-                    Real-time Bus ETA & Location Tracking
+                    Real-time Bus Estimated Time of Arrival & Location Tracking
                 </p>
             </div>
 
@@ -87,7 +78,7 @@ export default function Home() {
                     <h2>Track Your Bus</h2>
 
                     <p>
-                        Select your stop and get the live ETA
+                        Select your stop and get the live arrival time of the bus
                     </p>
                 </div>
 

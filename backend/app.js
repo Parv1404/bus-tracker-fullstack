@@ -12,9 +12,6 @@ function createApp() {
 
     app.use('/driver', driverRouter);
 
-    // serving frontend static files
-    //   app.use(express.static(path.join(__dirname, '../frontend/dist')));
-
     return app;
 }
 

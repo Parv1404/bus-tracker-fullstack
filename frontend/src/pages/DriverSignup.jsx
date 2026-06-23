@@ -46,7 +46,7 @@ export default function DriverSignup() {
         try {
             setIsSubmitting(true);
 
-            const response = await fetch("http://192.168.101.40:8000/driver/signup", {
+            const response = await fetch("http://localhost:3000/driver/signup", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -129,16 +129,6 @@ export default function DriverSignup() {
                         value={formData.phoneNumber}
                         onChange={handleChange}
                         required
-                    />
-
-                    <label htmlFor="busIdentifier">Bus Identifier</label>
-                    <input
-                        id="busIdentifier"
-                        name="busIdentifier"
-                        type="text"
-                        placeholder="Enter bus identifier"
-                        value={formData.busIdentifier}
-                        onChange={handleChange}
                     />
 
                     <label htmlFor="password">Password</label>

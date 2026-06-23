@@ -14,7 +14,6 @@ module.exports = function createDriverSocket(io, driverManager, etaService) {
 
         socket.on('get_eta', ({ hostel, requestId }) => {
             driverManager.addPending(requestId, socket, hostel);
-            console.log(hostel);
             // checking if there is any driver connected
             if (driverManager.hasConnectedDrivers()) {
                 driverManager.forEachDriver((driverSocketId) => {
@@ -53,5 +52,4 @@ module.exports = function createDriverSocket(io, driverManager, etaService) {
             console.log('Socket disconnected:', socket.id);
         });
     });
-    //   console.log("exitting handler");
 };
