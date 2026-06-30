@@ -1,25 +1,39 @@
 const {Bus} = require("../models/bus.models");
+const { getServiceAreaStatus, isValidCoordinate } = require("../services/serviceArea");
 
 const shareLocationController = async (req, res) => {
   try {
-    const { driverName, busNumber, latitude, longitude, accuracy } = req.body;
+    const { latitude, longitude, accuracy } = req.body;
+    const busNumber = req.driver.busNumber;
 
-    if (!driverName || !busNumber || latitude === undefined || longitude === undefined) {
+    if (latitude === undefined || longitude === undefined) {
       return res.status(400).json({
-        message: "Driver name, bus number, latitude, and longitude are required",
+        message: "Latitude and longitude are required",
       });
     }
 
+    const numericLatitude = Number(latitude);
+    const numericLongitude = Number(longitude);
+
+    if (!isValidCoordinate(numericLatitude, numericLongitude)) {
+      return res.status(400).json({
+        message: "Invalid latitude or longitude",
+      });
+    }
+
+    const areaStatus = getServiceAreaStatus(numericLatitude, numericLongitude);
+
     const updatedDriver = await Bus.findOneAndUpdate(
-      { driverName, busNumber },
+      { busNumber },
       {
         $set: {
           currentLocation: {
-            latitude,
-            longitude,
+            latitude: numericLatitude,
+            longitude: numericLongitude,
             accuracy,
             sharedAt: new Date(),
           },
+          serviceAreaStatus: areaStatus.status,
         },
       },
       { new: true }

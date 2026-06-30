@@ -3,11 +3,15 @@ const { Server } = require('socket.io');
 const createDriverSocket = require('./sockets/driverSocket');
 const driverManager = require('./services/driverManager');
 const etaService = require('./services/etaService');
+const { corsOptions } = require('./config');
 
 function startServer(app, port) {
     const server = http.createServer(app);
     const io = new Server(server, {
-        cors: { origin: '*', methods: ['GET', 'POST'] }
+        cors: {
+            ...corsOptions,
+            methods: ['GET', 'POST'],
+        },
     });
 
     createDriverSocket(io, driverManager, etaService); 

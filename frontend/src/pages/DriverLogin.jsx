@@ -1,51 +1,54 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+import { BACKEND_URL, DRIVER_PROFILE_KEY, DRIVER_TOKEN_KEY } from "../config";
+
 export default function DriverLogin() {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        driverName: "",
+        busNumber: "",
         password: "",
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    const handleChange = (event) => {
+        const { name, value } = event.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
         }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         setError("");
 
         try {
             setIsSubmitting(true);
 
-            const response = await fetch("http://localhost:3000/driver/login", {
-                method: "POST",   
+            const response = await fetch(`${BACKEND_URL}/driver/login`, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    busNumber: formData.busNumber.trim(),
+                    password: formData.password,
+                }),
             });
 
             const responseData = await response.json().catch(() => null);
 
             if (!response.ok) {
-                throw new Error(responseData?.message || "Invalid credentials");
+                throw new Error(responseData?.message || "Invalid bus number or password");
             }
 
-            if (responseData?.driver) {
-                localStorage.setItem("driverProfile", JSON.stringify(responseData.driver));
-            }
+            localStorage.setItem(DRIVER_TOKEN_KEY, responseData.token);
+            localStorage.setItem(DRIVER_PROFILE_KEY, JSON.stringify(responseData.driver));
 
-            alert("Login successful");
             navigate("/driver/location", { replace: true });
         } catch (err) {
             setError(err.message || "Login failed");
@@ -56,7 +59,7 @@ export default function DriverLogin() {
 
     return (
         <div className="container auth-page">
-            <section className="hero">
+            <section className="hero compact-hero">
                 <h1>Driver Login</h1>
             </section>
 
@@ -64,13 +67,13 @@ export default function DriverLogin() {
                 <h2>Welcome Back</h2>
 
                 <form className="auth-form" onSubmit={handleSubmit}>
-                    <label htmlFor="driverName">Driver Name</label>
+                    <label htmlFor="busNumber">Bus Number</label>
                     <input
-                        id="driverName"
-                        name="driverName"
+                        id="busNumber"
+                        name="busNumber"
                         type="text"
-                        placeholder="Enter driver name"
-                        value={formData.driverName}
+                        placeholder="Enter bus number"
+                        value={formData.busNumber}
                         onChange={handleChange}
                         required
                     />
@@ -86,7 +89,7 @@ export default function DriverLogin() {
                         required
                     />
 
-                    {error && <p style={{ color: "red" }}>{error}</p>}
+                    {error && <p className="form-error">{error}</p>}
 
                     <button type="submit" disabled={isSubmitting}>
                         {isSubmitting ? "Logging in..." : "Login"}

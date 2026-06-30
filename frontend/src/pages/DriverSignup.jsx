@@ -1,13 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
+import { BACKEND_URL } from "../config";
+
 export default function DriverSignup() {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         busNumber: "",
         driverName: "",
-        conductorName: "",
         phoneNumber: "",
         busIdentifier: "",
         password: "",
@@ -17,16 +18,16 @@ export default function DriverSignup() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    const handleChange = (event) => {
+        const { name, value } = event.target;
         setFormData((prev) => ({
             ...prev,
             [name]: value,
         }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         setError("");
 
         if (formData.password !== formData.confirmPassword) {
@@ -37,7 +38,6 @@ export default function DriverSignup() {
         const payload = {
             busNumber: formData.busNumber.trim(),
             driverName: formData.driverName.trim(),
-            conductorName: formData.conductorName.trim(),
             phoneNumber: formData.phoneNumber.trim(),
             busIdentifier: formData.busIdentifier.trim(),
             password: formData.password,
@@ -46,7 +46,7 @@ export default function DriverSignup() {
         try {
             setIsSubmitting(true);
 
-            const response = await fetch("http://localhost:3000/driver/signup", {
+            const response = await fetch(`${BACKEND_URL}/driver/signup`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -57,19 +57,10 @@ export default function DriverSignup() {
             const responseData = await response.json().catch(() => null);
 
             if (!response.ok) {
-                throw new Error(responseData?.message || "Error registering driver");
+                throw new Error(responseData?.message || responseData?.error || "Error registering driver");
             }
 
-            alert("Driver registered successfully");
-            setFormData({
-                busNumber: "",
-                driverName: "",
-                conductorName: "",
-                phoneNumber: "",
-                busIdentifier: "",
-                password: "",
-                confirmPassword: "",
-            });
+            navigate("/driver/login", { replace: true });
         } catch (err) {
             setError(err.message || "An error occurred while registering the driver");
         } finally {
@@ -79,7 +70,7 @@ export default function DriverSignup() {
 
     return (
         <div className="container auth-page">
-            <section className="hero">
+            <section className="hero compact-hero">
                 <h1>Driver Signup</h1>
             </section>
 
@@ -109,17 +100,6 @@ export default function DriverSignup() {
                         required
                     />
 
-                    <label htmlFor="conductorName">Conductor Name</label>
-                    <input
-                        id="conductorName"
-                        name="conductorName"
-                        type="text"
-                        placeholder="Enter conductor name"
-                        value={formData.conductorName}
-                        onChange={handleChange}
-                        required
-                    />
-
                     <label htmlFor="phoneNumber">Phone Number</label>
                     <input
                         id="phoneNumber"
@@ -129,6 +109,16 @@ export default function DriverSignup() {
                         value={formData.phoneNumber}
                         onChange={handleChange}
                         required
+                    />
+
+                    <label htmlFor="busIdentifier">Bus Identifier</label>
+                    <input
+                        id="busIdentifier"
+                        name="busIdentifier"
+                        type="text"
+                        placeholder="Optional vehicle identifier"
+                        value={formData.busIdentifier}
+                        onChange={handleChange}
                     />
 
                     <label htmlFor="password">Password</label>
@@ -153,7 +143,7 @@ export default function DriverSignup() {
                         required
                     />
 
-                    {error && <p style={{ color: "red" }}>{error}</p>}
+                    {error && <p className="form-error">{error}</p>}
 
                     <button type="submit" disabled={isSubmitting}>
                         {isSubmitting ? "Signing up..." : "Signup"}
@@ -167,4 +157,3 @@ export default function DriverSignup() {
         </div>
     );
 }
-

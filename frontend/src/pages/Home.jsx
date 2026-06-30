@@ -4,115 +4,198 @@ import { io } from "socket.io-client";
 
 import { BACKEND_URL } from "../config";
 
+const initialResult = {
+    type: "idle",
+    message: "",
+    details: null,
+};
+
 export default function Home() {
-    const [hostel, setHostel] = useState("");
-    const [eta, setEta] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [selectedStop, setSelectedStop] = useState("");
+    const [stops, setStops] = useState([]);
+    const [stopsStatus, setStopsStatus] = useState("loading");
+    const [socketConnected, setSocketConnected] = useState(false);
+    const [result, setResult] = useState(initialResult);
+    const [isRequesting, setIsRequesting] = useState(false);
 
     const socketRef = useRef(null);
 
     useEffect(() => {
-        const socket = io(BACKEND_URL, { 
-            auth: {
-                message: "Student socket",
-            },
-        });
+        let isMounted = true;
 
+        async function loadStops() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/stops`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data?.message || "Unable to load stops");
+                }
+
+                if (isMounted) {
+                    setStops(data.stops || []);
+                    setStopsStatus("ready");
+                }
+            } catch (error) {
+                if (isMounted) {
+                    setStopsStatus("error");
+                    setResult({
+                        type: "error",
+                        message: error.message || "Unable to load local stops.",
+                        details: null,
+                    });
+                }
+            }
+        }
+
+        loadStops();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
+
+    useEffect(() => {
+        const socket = io(BACKEND_URL);
         socketRef.current = socket;
 
         socket.on("connect", () => {
-            console.log("Student socket connected:", socket.id);
+            setSocketConnected(true);
         });
 
-        socket.on("connect_error", (error) => {
-            console.error("Student socket connection error:", error.message);
+        socket.on("disconnect", () => {
+            setSocketConnected(false);
+        });
+
+        socket.on("connect_error", () => {
+            setSocketConnected(false);
         });
 
         socket.on("eta_response", ({ driverName, busNumber, eta }) => {
-            setEta(`${Math.round(eta / 60)} mins (Bus ${busNumber} - ${driverName})`);
-            setIsLoading(false);
+            setResult({
+                type: "success",
+                message: "ETA found",
+                details: {
+                    driverName,
+                    busNumber,
+                    minutes: Math.max(1, Math.round(eta / 60)),
+                },
+            });
+            setIsRequesting(false);
         });
 
         socket.on("eta_response_error", ({ error }) => {
-            setEta(`Error: ${error || "Unable to fetch ETA"}`);
-            setIsLoading(false);
+            setResult({
+                type: "error",
+                message: error || "Unable to fetch ETA.",
+                details: null,
+            });
+            setIsRequesting(false);
         });
 
         return () => {
-            socket.off("eta_response");
-            socket.off("eta_response_error");
             socket.disconnect();
         };
     }, []);
 
     const handleEta = () => {
-        if (!socketRef.current) return;
+        if (!socketRef.current || !selectedStop) return;
 
-        setEta(null);
-        setIsLoading(true);
+        setResult({
+            type: "loading",
+            message: "Requesting a fresh driver location...",
+            details: null,
+        });
+        setIsRequesting(true);
 
         socketRef.current.emit("get_eta", {
-            hostel,
-            requestId: `${hostel}-${Date.now()}`,
+            stopName: selectedStop,
+            requestId: `${selectedStop}-${Date.now()}`,
         });
     };
 
     return (
         <div className="container">
-            <div className="hero">
+            <div className="hero compact-hero">
                 <div className="hero-top">
-                    <Link to="/driver/login" className="driver-link" replace = {true}>
+                    <Link to="/driver/login" className="driver-link">
                         Driver Dashboard
                     </Link>
                 </div>
 
-                <h1>Bus Tracking System</h1>
+                <h1>Local Shuttle ETA</h1>
 
                 <p>
-                    Real-time Bus Estimated Time of Arrival & Location Tracking
+                    A real-time local shuttle ETA system for active buses inside the configured service area.
                 </p>
             </div>
 
             <div className="card">
                 <div className="card-header">
-                    <h2>Track Your Bus</h2>
+                    <h2>Available stops on the local shuttle route</h2>
 
                     <p>
-                        Select your stop and get the live arrival time of the bus
+                        This service provides ETAs only for buses actively operating within the configured local service area.
                     </p>
                 </div>
 
                 <select
-                    value={hostel}
-                    onChange={(e) => setHostel(e.target.value)}
+                    value={selectedStop}
+                    onChange={(event) => {
+                        setSelectedStop(event.target.value);
+                        setResult(initialResult);
+                    }}
+                    disabled={stopsStatus !== "ready" || isRequesting}
                 >
-                    <option value="">Select Stop</option>
-                    <option value="Meerut Central">Meerut Central</option>
-                    <option value="Bhainsali">Bhainsali</option>
-                    <option value="Hostel 3">Hostel 3</option>
-                    <option value="Hostel 4">Hostel 4</option>
+                    <option value="">
+                        {stopsStatus === "loading" ? "Loading stops..." : "Select Stop"}
+                    </option>
+                    {stops.map((stop) => (
+                        <option key={stop.name} value={stop.name}>
+                            {stop.name}
+                        </option>
+                    ))}
                 </select>
+
+                {stopsStatus === "error" && (
+                    <div className="eta-box error">
+                        Local stops could not be loaded. Check the backend connection.
+                    </div>
+                )}
 
                 <div className="btn-group">
                     <button
                         onClick={handleEta}
-                        disabled={isLoading || !hostel}
+                        disabled={isRequesting || !selectedStop || !socketConnected || stopsStatus !== "ready"}
                     >
-                        {isLoading ? "Fetching..." : "Get ETA"}
+                        {isRequesting ? "Requesting ETA..." : "Get ETA"}
                     </button>
                 </div>
 
-                {isLoading && (
+                {!socketConnected && (
+                    <p className="helper-text">
+                        Connecting to the ETA service...
+                    </p>
+                )}
+
+                {result.type === "loading" && (
                     <div className="loader-container">
                         <div className="loader"></div>
-
-                        <p>Fetching bus location...</p>
+                        <p>{result.message}</p>
                     </div>
                 )}
 
-                {eta && (
+                {result.type === "error" && (
+                    <div className="eta-box error">
+                        {result.message}
+                    </div>
+                )}
+
+                {result.type === "success" && (
                     <div className="eta-box success">
-                        🚍 ETA: {eta}
+                        <p><strong>{result.details.minutes} minutes</strong></p>
+                        <p>Bus {result.details.busNumber}</p>
+                        <p>Driver: {result.details.driverName}</p>
                     </div>
                 )}
             </div>
