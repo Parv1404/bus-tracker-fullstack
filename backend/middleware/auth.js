@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-const { JWT_SECRET } = require('../config');
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'default_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET;
 const { Bus } = require('../models/bus.models');
 
 function getJwtSecret() {

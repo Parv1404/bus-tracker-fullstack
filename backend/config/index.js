@@ -5,6 +5,9 @@ const ORS_MATRIX_URL = 'https://api.openrouteservice.org/v2/matrix/driving-car';
 const stops = {
     'Meerut Central': { latitude: 28.97320794050894, longitude: 77.69064390878778 },
     'Bhainsali Metro Station': { latitude: 28.988271357753305, longitude: 77.7004835176341 },
+    'Brahampuri': { latitude:28.96044402571718, longitude: 77.68465367260697 },
+    'Shatabdi Nagar': { latitude: 28.94751184554895, longitude: 77.67358771957899 },
+    'Begumpul': { latitude: 28.996580108343753, longitude: 77.70581651280187 },
 };
 
 function numberFromEnv(name, fallback) {

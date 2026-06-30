@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { connectDB } = require('./config/db');
-const { corsOptions, serviceArea, stops } = require('./config');
+const { corsOptions, serviceArea, stops } = require('./config/index.js');
 const { router: driverRouter } = require('./routes/login.router');
 
 function createApp() {

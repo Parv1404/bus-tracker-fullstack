@@ -60,6 +60,8 @@ export default function DriverSignup() {
                 throw new Error(responseData?.message || responseData?.error || "Error registering driver");
             }
 
+            alert("Driver registered successfully! Please log in.");
+
             navigate("/driver/login", { replace: true });
         } catch (err) {
             setError(err.message || "An error occurred while registering the driver");
