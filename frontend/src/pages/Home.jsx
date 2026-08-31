@@ -123,20 +123,16 @@ export default function Home() {
                     </Link>
                 </div>
 
-                <h1>Local Shuttle ETA</h1>
+                <h1>CampusCommute</h1>
 
                 <p>
-                    A real-time local shuttle ETA system for active buses inside the configured service area.
+                    A real-time local shuttle ETA system for active commute shuttles inside the configured service area.
                 </p>
             </div>
 
             <div className="card">
                 <div className="card-header">
                     <h2>Available stops on the local shuttle route</h2>
-
-                    <p>
-                        This service provides ETAs only for buses actively operating within the configured local service area.
-                    </p>
                 </div>
 
                 <select

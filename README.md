@@ -1,6 +1,6 @@
-# Real-Time Local Shuttle ETA System
+# CampusCommute
 
-A real-time local shuttle ETA system using React, Node.js, Socket.IO, MongoDB, browser geolocation, and OpenRouteService.
+CampusCommute is a real-time local shuttle ETA system using React, Node.js, Socket.IO, MongoDB, browser geolocation, and OpenRouteService.
 
 This project is built for a local shuttle route. It does not simulate buses or calculate ETAs for drivers outside the configured service area.
 

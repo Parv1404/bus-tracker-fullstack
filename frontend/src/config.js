@@ -1,4 +1,4 @@
-const localBackendUrl = `${window.location.protocol}//${window.location.hostname}:8000`;
+const localBackendUrl = `${window.location.protocol}//${window.location.hostname}:3000`;
 
 export const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || localBackendUrl).replace(/\/$/, "");
 
@@ -21,3 +21,4 @@ export function clearDriverSession() {
     localStorage.removeItem(DRIVER_TOKEN_KEY);
     localStorage.removeItem(DRIVER_PROFILE_KEY);
 }
+
