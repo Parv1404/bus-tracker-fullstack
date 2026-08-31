@@ -8,6 +8,7 @@ const stops = {
     'Brahampuri': { latitude:28.96044402571718, longitude: 77.68465367260697 },
     'Shatabdi Nagar': { latitude: 28.94751184554895, longitude: 77.67358771957899 },
     'Begumpul': { latitude: 28.996580108343753, longitude: 77.70581651280187 },
+    'Ambedkar Hostel West Campus HBTU' : {latitude: 26.500857631495553, longitude: 80.27486016891024}
 };
 
 function numberFromEnv(name, fallback) {
@@ -48,10 +49,10 @@ const corsOptions = {
 };
 
 const serviceArea = {
-    name: process.env.SERVICE_AREA_NAME || 'Meerut local service area',
+    name: process.env.SERVICE_AREA_NAME || 'HBTU local service area',
     center: {
-        latitude: numberFromEnv('SERVICE_AREA_CENTER_LAT', 28.9845),
-        longitude: numberFromEnv('SERVICE_AREA_CENTER_LNG', 77.7064),
+        latitude: numberFromEnv('SERVICE_AREA_CENTER_LAT', 26.498584792512403),
+        longitude: numberFromEnv('SERVICE_AREA_CENTER_LNG', 80.28933979005704),
     },
     radiusKm: numberFromEnv('SERVICE_AREA_RADIUS_KM', 15),
 };

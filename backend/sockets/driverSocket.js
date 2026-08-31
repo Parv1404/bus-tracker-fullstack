@@ -86,7 +86,7 @@ module.exports = function createDriverSocket(io, driverManager, etaService) {
     io.on('connection', (socket) => {
         const { token } = socket.handshake.auth || {};
 
-        if (token) {
+        if(token) {
             try {
                 const payload = verifyDriverToken(token);
                 driverManager.registerDriver(
@@ -99,7 +99,7 @@ module.exports = function createDriverSocket(io, driverManager, etaService) {
                 );
                 console.log(`Driver registered - Bus ${payload.busNumber}: ${socket.id}`);
                 socket.emit('verify_driver_location');
-            } catch (error) {
+            } catch(error) {
                 socket.emit('driver_auth_error', { error: 'Invalid or expired driver token' });
                 socket.disconnect(true);
                 return;
@@ -112,23 +112,23 @@ module.exports = function createDriverSocket(io, driverManager, etaService) {
             const requestedStop = stopName || hostel;
             const stopLocation = stops[requestedStop];
 
-            if (!requestId) {
+            if(!requestId) {
                 socket.emit('eta_response_error', { error: 'Invalid ETA request. Please try again.' });
                 return;
             }
 
-            if (!stopLocation) {
+            if(!stopLocation) {
                 socket.emit('eta_response_error', { error: 'Please choose a supported local stop.' });
                 return;
             }
 
-            if (!driverManager.hasConnectedDrivers()) {
+            if(!driverManager.hasConnectedDrivers()) {
                 socket.emit('eta_response_error', { error: 'No drivers connected' });
                 return;
             }
 
             const eligibleDrivers = driverManager.getEligibleDrivers();
-            if (eligibleDrivers.length === 0) {
+            if(eligibleDrivers.length === 0) {
                 socket.emit('eta_response_error', {
                     error: `No active bus is currently available in the ${serviceArea.name}.`,
                 });
@@ -161,7 +161,7 @@ module.exports = function createDriverSocket(io, driverManager, etaService) {
             if (!driver || !pending?.candidateSocketIds.has(socket.id)) return;
             if (!driverManager.markDriverResponded(requestId, socket.id)) return;
 
-            if (locationError) {
+            if(locationError) {
                 driverManager.updateDriverStatus(socket.id, 'gps_unavailable');
                 driverManager.addFailure(requestId, { type: 'location_error', busNumber: driver.busNumber });
             } else {
@@ -181,7 +181,7 @@ module.exports = function createDriverSocket(io, driverManager, etaService) {
                     });
                     emitDriverStatus(socket, driver, statusDetails);
 
-                    if (!statusDetails.eligible) {
+                    if(!statusDetails.eligible) {
                         driverManager.addFailure(requestId, { type: 'outside_service_area', busNumber: driver.busNumber });
                     } else {
                         try {

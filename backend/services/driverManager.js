@@ -6,7 +6,7 @@ const socketByBus = new Map();
 
 function registerDriver(identity, socketId) {
     const previousSocketId = socketByBus.get(identity.busNumber);
-    if (previousSocketId && previousSocketId !== socketId) {
+    if(previousSocketId && previousSocketId !== socketId) {
         driversBySocket.delete(previousSocketId);
     }
 
@@ -70,7 +70,7 @@ function addPending(requestId, request, ttl = ETA_REQUEST_TIMEOUT_MS) {
     if (!requestId) return null;
 
     const timeout = setTimeout(() => {
-        if (pendingRequests.has(requestId)) {
+        if(pendingRequests.has(requestId)) {
             request.onTimeout(requestId);
         }
     }, ttl);

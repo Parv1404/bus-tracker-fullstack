@@ -14,7 +14,7 @@ function formatStatus(status) {
 
 function getCurrentLocation() {
     return new Promise((resolve) => {
-        if (!navigator.geolocation) {
+        if(!navigator.geolocation) {
             resolve({ locationError: "Geolocation is not supported by this browser" });
             return;
         }
@@ -64,7 +64,7 @@ export default function DriverLocation() {
             const location = await getCurrentLocation();
             socket.emit(eventName, requestId ? { requestId, ...location } : location);
 
-            if (location.locationError) {
+            if(location.locationError) {
                 setGpsProblem(location.locationError);
             }
         };

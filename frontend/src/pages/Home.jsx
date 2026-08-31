@@ -28,15 +28,15 @@ export default function Home() {
                 const response = await fetch(`${BACKEND_URL}/stops`);
                 const data = await response.json();
 
-                if (!response.ok) {
+                if(!response.ok) {
                     throw new Error(data?.message || "Unable to load stops");
                 }
 
-                if (isMounted) {
+                if(isMounted) {
                     setStops(data.stops || []);
                     setStopsStatus("ready");
                 }
-            } catch (error) {
+            } catch(error) {
                 if (isMounted) {
                     setStopsStatus("error");
                     setResult({

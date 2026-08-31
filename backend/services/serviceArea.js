@@ -44,7 +44,7 @@ function isWithinServiceArea(latitude, longitude, area = serviceArea) {
 }
 
 function getServiceAreaStatus(latitude, longitude) {
-    if (!isValidCoordinate(latitude, longitude)) {
+    if(!isValidCoordinate(latitude, longitude)) {
         return {
             status: 'invalid_location',
             eligible: false,
