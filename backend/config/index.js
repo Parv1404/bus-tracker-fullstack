@@ -8,7 +8,9 @@ const stops = {
     'Brahampuri': { latitude:28.96044402571718, longitude: 77.68465367260697 },
     'Shatabdi Nagar': { latitude: 28.94751184554895, longitude: 77.67358771957899 },
     'Begumpul': { latitude: 28.996580108343753, longitude: 77.70581651280187 },
-    'Ambedkar Hostel West Campus HBTU' : {latitude: 26.500857631495553, longitude: 80.27486016891024}
+    'Vishweshariya Hostel West Campus HBTU' : {latitude: 26.49833283851187, longitude: 80.28532520819714},
+    'Central Workshop' : {latitude: 26.49550980649606, longitude: 80.30654964850683}
+
 };
 
 function numberFromEnv(name, fallback) {

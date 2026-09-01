@@ -64,7 +64,7 @@ async function calculateETA(stopLocation, driverLocation) {
     const etaSeconds = data.data[0].routeSummary.travelTimeInSeconds;
 
     console.log(etaSeconds);
-
+    
     if (typeof etaSeconds !== 'number') {
         throw new Error('Invalid ETA response from ORS');
     }
